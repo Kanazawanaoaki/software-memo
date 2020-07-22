@@ -1,8 +1,8 @@
 # soft1 lec01
 ソフトウェア第一の第一回.  
 `ipython`でプログラムを立ち上げる.  
-数式など.
-```
+
+```python
 In [1]: print("Hello, world!")
 Hello, world!
 
@@ -11,7 +11,8 @@ Out[2]: 2
 
 In [3]: quit()
 ```
-```
+数式など.
+```python
 In [1]: 7-2 #引き算
 Out[1]: 5
 
@@ -90,7 +91,7 @@ In [29]: heron(3,4,5)
 Out[29]: 6.0
 ```
 ファイルを読み込み入出力など.  
-```
+```python
 In [1]: execfile('hello.py')
 ---------------------------------------------------------------------------
 NameError                                 Traceback (most recent call last)
