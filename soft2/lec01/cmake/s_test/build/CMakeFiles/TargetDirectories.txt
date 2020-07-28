@@ -1,0 +1,3 @@
+/home/kanazawa/Desktop/codes/in_jsk/software-memo/soft2/lec01/cmake/s_test/build/CMakeFiles/rebuild_cache.dir
+/home/kanazawa/Desktop/codes/in_jsk/software-memo/soft2/lec01/cmake/s_test/build/CMakeFiles/test4.dir
+/home/kanazawa/Desktop/codes/in_jsk/software-memo/soft2/lec01/cmake/s_test/build/CMakeFiles/edit_cache.dir

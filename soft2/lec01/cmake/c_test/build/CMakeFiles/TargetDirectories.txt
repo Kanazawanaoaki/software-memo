@@ -1,0 +1,4 @@
+/home/kanazawa/Desktop/codes/in_jsk/software-memo/soft2/lec01/cmake/c_test/build/CMakeFiles/rebuild_cache.dir
+/home/kanazawa/Desktop/codes/in_jsk/software-memo/soft2/lec01/cmake/c_test/build/CMakeFiles/edit_cache.dir
+/home/kanazawa/Desktop/codes/in_jsk/software-memo/soft2/lec01/cmake/c_test/build/CMakeFiles/hello_goodby.dir
+/home/kanazawa/Desktop/codes/in_jsk/software-memo/soft2/lec01/cmake/c_test/build/CMakeFiles/test4.dir

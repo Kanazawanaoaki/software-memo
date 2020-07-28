@@ -1,0 +1,1 @@
+/usr/bin/cc   -rdynamic CMakeFiles/test4.dir/main.c.o  -o test4 -Wl,-rpath,/home/kanazawa/Desktop/codes/in_jsk/software-memo/soft2/lec01/cmake/c_test/build libhello_goodby.so 

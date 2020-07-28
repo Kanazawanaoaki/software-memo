@@ -1,0 +1,1 @@
+/usr/bin/cc   -rdynamic CMakeFiles/test4.dir/main.c.o CMakeFiles/test4.dir/hello.c.o CMakeFiles/test4.dir/goodbye.c.o  -o test4 

@@ -1,0 +1,1 @@
+/usr/bin/cc -fPIC   -shared -Wl,-soname,libhello_goodby.so -o libhello_goodby.so CMakeFiles/hello_goodby.dir/hello.c.o CMakeFiles/hello_goodby.dir/goodbye.c.o 

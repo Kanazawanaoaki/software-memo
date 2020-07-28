@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+include_directories(include)
+add_library(hello_goodby SHARED hello.c goodbye.c)
+add_executable(test4 main.c)
+target_link_libraries(test4 hello_goodby)
