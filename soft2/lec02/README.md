@@ -149,7 +149,7 @@ undefined
 
 python  
 ```python
-python
+$ python
 >>> 486
 486
 >>> 1000 -334
@@ -204,7 +204,7 @@ python
 >>> f(1,2,3)
 6
 ```
-リスト
+リスト lisp
 ```Lisp
 [1]> (setq a '(1 2 3 4))
 (1 2 3 4)
@@ -312,4 +312,105 @@ NIL
 3
 [44]> (setq a (append a (list (cons 'e 5))))
 ((A . 1) (B . 2) (C . 3) (D . 4) (E . 5))
+```
+リスト python
+```python
+$ python
+Python 2.7.17 (default, Jul 20 2020, 15:37:01)
+[GCC 7.5.0] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> a = [1, 2, 3, 4]
+>>> a
+[1, 2, 3, 4]
+>>> a = ['this', 'is', 'a', 'pen']
+>>> a
+['this', 'is', 'a', 'pen']
+>>> len([1,2,3,4])
+4
+>>> sorted([1,2,3,4],reverse=True)
+[4, 3, 2, 1]
+>>> a = [1, 2]
+>>> a.extend([3, 4])
+>>> a
+[1, 2, 3, 4]
+>>> a = [1, 2, 3, 4]
+>>> a.reverse()
+>>> a
+[4, 3, 2, 1]
+>>> a = [1,2,3,4]
+>>> a.pop()
+4
+>>> a
+[1, 2, 3]
+>>> a.append(4)
+>>> a
+[1, 2, 3, 4]
+>>> a.pop(0)
+1
+>>> a
+[2, 3, 4]
+>>> a = [1,2,3,4]
+>>> a[0]
+1
+>>> a[1:]
+[2, 3, 4]
+>>> ['this'][0]
+'this'
+>>> ['this'][1:]
+[]
+>>> ['this', 'is'][1:]
+['is']
+>>> ['this', 'is', 'a'][1:]
+['is', 'a']
+>>> a = []
+>>> a[0]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+IndexError: list index out of range
+>>> a[1:]
+[]
+>>> [[1,2,3,4] , ['this','is','a','pen']][0]
+[1, 2, 3, 4]
+>>> [[1,2,3,4] , ['this','is','a','pen']][1:]
+[['this', 'is', 'a', 'pen']]
+>>> [[1,2,3,4] , ['this','is','a','pen']][1:][0]
+['this', 'is', 'a', 'pen']
+>>> [[1,2,3,4] , ['this','is','a','pen']][1:][0][0]
+'this'
+>>> a = [1,2,3,4]
+>>> a.sort(reverse=True)
+>>> a
+[4, 3, 2, 1]
+>>> sorted(a)
+[1, 2, 3, 4]
+>>> a
+[4, 3, 2, 1]
+>>> a = sorted(a)
+>>> a
+[1, 2, 3, 4]
+>>> for x in [1,2,3,4]:
+...     print(x)
+...
+1
+2
+3
+4
+>>> map(sorted, [[2,1],[4,3,2,1]])
+[[1, 2], [1, 2, 3, 4]]
+>>> map(lambda x: x[0], [[1,2],[2,3]])
+[1, 2]
+>>> reduce(lambda x, y: x+y, [1,2,3,4])
+10
+>>> filter(lambda n:n%2==1, [1,2,3,4])
+[1, 3]
+>>> 0 in [1,2,3,4]
+False
+>>> 3 in [1,2,3,4]
+True
+>>> a = {'a':1, 'b':2, 'c':3, 'd':4}
+>>> a['c']
+3
+>>> a['e'] = 5
+>>> a
+{'a': 1, 'c': 3, 'b': 2, 'e': 5, 'd': 4}
 ```
