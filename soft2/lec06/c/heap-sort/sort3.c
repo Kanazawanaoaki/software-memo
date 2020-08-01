@@ -26,15 +26,23 @@ int main(int argc, char *argv[])
 
 void heap_sort(int *num, int length)
 {
-  int i, n, tmp;
+  int tmp, i;
+  // 最初のヒープを作る
+  for (i=1;i<length;i++){
+    heap_add(num, length, i);
+  }
+  // ヒープから最小値を抜き配列の後ろからつめていく
   for(i=0;i<length;i++){
-    for(n=length - 1;n>i;n--){
-      if(num[n] < num[n-1]){//比較対象の数字が一つ前の数字より小さければ入れ替える．
-	tmp = num[n];
-	num[n] = num[n-1];
-	num[n-1] = tmp;
-      }
-    }
+    tmp = num[length-1-i];
+    num[length-1-i] = num[0];
+    num[0] = tmp;
+    heap_del(num, length-1-i, 0);
+  }
+  // 逆順にする
+  for (i=0;i<length/2;i++){
+    tmp = num[i];
+    num[i] = num[length-i-1];
+    num[length-i-1] = tmp;
   }
 }
 
@@ -42,20 +50,32 @@ void heap_add(int *num, int length, int c)
 {
   int p, tmp;
   while (1) {
-    c = (c-1)/2; // 親のインデックスを計算
+    p = (c-1)/2; // 親のインデックスを計算
     if (c < 0)
       break;
     // 親の方が小さい場合はbreak
     if (num[p] <= num[c])
       break;
-    tmp = num[p]; num[p]=num[c];num[c]=tmp;
+    tmp = num[p]; num[p]=num[c]; num[c]=tmp;
     c = p; //親ノードを新たな子ノードにする
   }
 }
 
 void heap_del(int *num, int length, int p)
 {
-  
+  int c, tmp;
+  while (1) {
+    c = p*2 + 1; // 子のインデックスを計算
+    if (c >= length)
+      break;
+    if (c+1 < length && num[c+1] <= num[c])
+      c = c+1;
+    // 親の方が小さい場合は break
+    if (num[p] <= num[c])
+      break;
+    tmp=num[p];num[p]=num[c];num[c]=tmp;
+    p = c; // 子ノードを新たな親ノードにする
+  }
 }
 
 
