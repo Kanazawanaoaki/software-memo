@@ -119,3 +119,46 @@ void input_vector(double *b,char c,FILE *fin, FILE *fout){
     fprintf(fout, "\n");
   }
 }
+
+
+double *dvector(int i,int j)
+{
+  int n = j - i + 1;
+  double *vec=malloc(n*sizeof(double));
+  if(vec==NULL){
+    printf("Failure!! (from devector) \n");
+    exit(1);
+  }
+  return (vec);
+}
+
+double **dmatrix(int nr1, int nr2, int nl1, int nl2){
+  int nr = nr2 - nr1 + 1;
+  int nc = nl2 - nl1 + 1;
+  double **mat;
+  mat = malloc(nr*sizeof(double *));
+  if(mat == NULL)
+    puts("Failure!! (from (*dmatrix)[nr])");
+  else {
+    int i,j;
+    double *base = malloc(nr*nc*sizeof(double));
+    if(base == NULL)
+      puts("Failure!!(from dmatrix[nr][nc])");
+    else {
+      for(i=0;i<nr;i++)
+	mat[i] = base + i*nc;
+    }
+    free(base);
+  }
+  return (mat);
+}
+
+void free_dmatrix(double **a, int nr1, int nr2, int nl1, int nl2){
+  free(a);
+}
+
+void free_dvector(double *a, int i){
+  free(a);
+}
+
+
