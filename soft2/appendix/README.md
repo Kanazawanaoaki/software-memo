@@ -11,7 +11,7 @@ nil
 ```
 
 ?で始まる変数の判定
-```lisp
+```Lisp
 1.eus$ (symbol-name 'abc)
 "ABC"
 2.eus$ (symbol-name '?abc)
@@ -28,4 +28,20 @@ $ eus list-3-2-2.l
 t
 2.eus$ (variable-p 'a)
 nil
+```
+
+マッチング関数の構造
+```Lisp
+eus$ (match '(?a ?a) '(x y))
+t                                                                          
+eus$ (match '(?a ?a) '(x x))
+t    
+```
+
+バインディング情報を持ったmatch関数
+```Lisp
+eus$ (match '(?a ?a) '(x y))
+fail                                                                       
+eus$ (match '(?a ?a) '(x x))
+((?a . x))
 ```
