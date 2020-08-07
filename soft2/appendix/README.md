@@ -45,3 +45,19 @@ fail
 eus$ (match '(?a ?a) '(x x))
 ((?a . x))
 ```
+
+ハッシュ表によるバインディング情報の管理
+```Lisp
+eus$ (setq htab (make-hash-table))
+#<hash-table #X5647b8635e08 0/10>
+eus$ (setf (gethash 10 htab) 20)
+20
+eus$ (setf (gethash 'a htab) 'b)
+b
+eus$ (gethash 10 htab)
+20
+eus$ (gethash 'a htab)
+b
+eus$ (gethash 'b htab)
+nil
+```
