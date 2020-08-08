@@ -61,3 +61,37 @@ b
 eus$ (gethash 'b htab)
 nil
 ```
+```Lisp
+eus$ (sxhash 10)
+10
+eus$ (sxhash 20)
+20
+eus$ (sxhash '(10 20))
+30
+eus$ (sxhash 'a)
+70
+eus$ (sxhash 'b)
+71
+eus$ (sxhash '(a b))
+141
+```
+```Lisp
+$ eus list-3-2-5.l
+eus$ (setq htab (make-hash-table :test #'equal))
+#<hash-table #X55f45a49ad90 0/10>
+eus$ (setf (gethash '(10 20) htab) 30)
+30
+eus$ (setf (gethash '(a b) htab) 'c)
+c
+eus$ (gethash '(10 20) htab)
+30
+eus$ (gethash '(a b) htab)
+c
+```
+```Lisp
+$ rlwrap eus list-3-2-5.l
+eus$ (match '(?a ?a) '(x x))
+#<hash-table #X561ca624bd90 1/10>
+eus$ (match '(?a ?a) '(x y))
+fail
+```
