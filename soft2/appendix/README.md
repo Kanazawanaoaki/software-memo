@@ -134,10 +134,30 @@ nil
 ```
 
 ## プロダクションシステム
+プロダクションルールの表現
 ```Lisp
 $ eus list-3-3-2.l
 eus$ (macroexpand '(<- (human ?x) (woman ?x)))
 (setq *rules* (cons (cons '(human ?x) (list '(woman ?x))) *rules*))
 eus$ (macroexpand '(push x y))
 (setq y (cons x y))
+```
+条件部と作業記憶のマッチング
+```Lisp
+$ eus list-3-3-3.l
+eus$ (match-antecedent '((child ?x ?y) (parent ?y ?x))
+'((parent donald nancy) (male donald) (female nancy)))
+((?x . nancy) (?y . donald))
+eus$ (match-antecedent '((daughter ?x ?y) (and (child ?x ?y) (female ?x)))
+'((child nancy donald) (parent donald nancy) (male donald) (female nancy)))
+((?y . donald) (?x . nancy))
+eus$ (setq *rules* '(((daughter ?y ?x) (and (child ?y ?x) (female ?y)))
+((child ?x ?y) (parent ?y ?x))
+((father ?x ?y) (and (parent ?x ?y) (male ?x)))))
+(((daughter ?y ?x) (and (child ?y ?x) (female ?y))) ((child ?x ?y) (parent ?y ?x)) ((father ?x ?y) (and (parent ?x ?y) (male ?x))))
+eus$ (select-conflict-set '((parent donald nancy) (male donald) (female nancy)))
+(((child ?x ?y) (parent ?y ?x)) ((father ?x ?y) (and (parent ?x ?y) (male ?x))))
+eus$ (select-conflict-set '((child nancy donald) (parent donald nancy)
+(male donald) (female nancy)))
+(((daughter ?y ?x) (and (child ?y ?x) (female ?y))) ((child ?x ?y) (parent ?y ?x)) ((father ?x ?y) (and (parent ?x ?y) (male ?x))))
 ```
