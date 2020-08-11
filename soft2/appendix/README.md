@@ -161,3 +161,21 @@ eus$ (select-conflict-set '((child nancy donald) (parent donald nancy)
 (male donald) (female nancy)))
 (((daughter ?y ?x) (and (child ?y ?x) (female ?y))) ((child ?x ?y) (parent ?y ?x)) ((father ?x ?y) (and (parent ?x ?y) (male ?x))))
 ```
+
+競合解消
+```Lisp
+$ rlwrap eus list-3-3-4.l
+eus$ (conflict-resolution
+(select-conflict-set
+'((parent donald nancy)
+(male donald)
+(female nancy))))
+((child ?x ?y) (parent ?y ?x))
+eus$ (conflict-resolution
+(select-conflict-set
+'((child nancy donald)
+(parent donald nancy)
+(male donald)
+(female nancy))))
+((daughter ?y ?x) (and (child ?y ?x) (female ?y)))
+```
