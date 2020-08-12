@@ -179,3 +179,24 @@ eus$ (conflict-resolution
 (female nancy))))
 ((daughter ?y ?x) (and (child ?y ?x) (female ?y)))
 ```
+
+行動の実行
+```Lisp
+$ eus list-3-3-5.l
+eus$ (setq rule '((child ?x ?y) (parent ?y ?x)))
+((child ?x ?y) (parent ?y ?x))
+eus$ (substitute-bindings
+            (match-antecedent
+                 rule '((parent donald nancy)
+                        (male donald)
+                        (female nancy)))
+             rule)
+((child nancy donald) (parent donald nancy))
+```
+```Lisp
+$ rlwrap eus list-3-3-5.l
+eus$ (defparameter *rules* nil)
+nil
+eus$ (<- (father ?x ?y) (and (parent ?x ?y) (male ?x)))
+(((father ?x ?y) (and (parent ?x ?y) (male ?x))))
+```
