@@ -125,4 +125,39 @@ We'll never see this.99
 month-length
 45.eus$ (month-length 'feb)
 28
+4.eus2$ (setq that 3)
+3
+5.eus2$ (when (oddp that)
+             (print "Humm, that's odd.")
+             (+ that 1))
+"Humm, that's odd."
+4
+6.eus2$ (if (oddp that)
+             (progn
+                (print "Humm, that's odd.")
+                (+ that 1)))
+"Humm, that's odd."
+4
+1.eus2$ (macroexpand '(when t (print 1)))
+(if t (progn (print 1)))
+2.eus2$ (setq a 3)
+3
+4.eus2$ `(1 2 ,a)
+(1 2 3)
+5.eus2$ (setq b (list 1 2 3))
+(1 2 3)
+6.eus2$ `(1 2 ,@b)
+(1 2 1 2 3)
+7.eus2$ (mapcar #'(lambda (x) (+ x 10)) '(1 2 3))
+(11 12 13)
+8.eus2$ (mapcar #'list '(a b c) '(1 2 3 4))
+((a 1) (b 2) (c 3))
+9.eus2$ (reduce #'intersection '((b r e a d 's) (b a d) (c a t)))
+(a)
+10.eus2$ (reduce #'+ '(1 2 3 4 5 6 7 8 9 10))
+55
+11.eus2$ (reduce #'(lambda (x y) (if (< x y) x y)) (mapcar #'(lambda (x) (* x x)) '(3 -4 2 -1)))
+1
 ```
+
+## EusLisp拡張
