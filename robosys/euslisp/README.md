@@ -272,3 +272,27 @@ l = 0, g = 1
 10.irteusgl$ (objects (list b4))
 (#<body #X555ab4eeda40 (:complex -) 0.0 0.0 0.0 / 0.0 0.0 0.0>)
 ```
+
+## ロボットモデリング
+```Lisp
+1.irteusgl$ pa
+#<cascaded-coords #X56240a48b150  0.0 400.0 1600.0 / 0.0 0.0 1.571>
+2.irteusgl$ ph
+#<cascaded-coords #X56240a48b348  0.0 1000.0 1600.0 / 0.0 0.0 1.571>
+3.irteusgl$ (send pa :parent)
+nil
+4.irteusgl$ (send ph :parent)
+#<cascaded-coords #X56240a48b150  0.0 400.0 1600.0 / 0.0 0.0 1.571>
+5.irteusgl$ (send ph :worldpos)
+#f(0.0 1000.0 1600.0)
+6.irteusgl$ (send ph :pos)
+#f(0.0 0.0 -600.0)
+7.irteusgl$ (send ph :worldrot)
+#2f((1.0 0.0 0.0) (0.0 7.216450e-16 -1.0) (0.0 1.0 7.216450e-16))
+8.irteusgl$ (send ph :rot)
+#2f((1.0 0.0 0.0) (0.0 1.0 0.0) (0.0 0.0 1.0))
+9.irteusgl$ (send pa :transform-vector #f(0 0 600))
+#f(0.0 -200.0 1600.0)
+10.irteusgl$ (send pa :inverse-transform-vector (send ph :worldpos))
+#f(0.0 -2.273737e-13 -600.0)
+```
