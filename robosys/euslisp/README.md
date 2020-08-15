@@ -161,3 +161,114 @@ month-length
 ```
 
 ## EusLisp拡張
+```Lisp
+1.eusgl$ (sys::make-thread 4)
+(#<thread #X560572137b70> #<thread #X560572137de0> #<thread #X56057213c0a0> #<thread #X5605723d6b50>)
+2.eusgl$ (setq g 0)
+0
+3.eusgl$ (defun test (l) (while (>= g 0) (format t "l = ~A, g = ~A~%" l g) (unix:sleep 1)))
+test
+4.eusgl$ (sys::thread-no-wait #'test 0)
+l = #<0, g = 0
+l = #<0, g = 0
+thread #X560572137de0>
+l = 0, g = 0
+l = 0, g = 0
+l = 0, g = 0
+(setq g 1)
+1
+6.B3-eusgl$ l = 0, g = 1
+l = 0, g = 1
+l = 0, g = 1
+l = 0, g = 1
+l = 0, g = 1
+(sys::thread-no-wait #'test 1)
+l = 1, g = 1
+l = 1, g = 1
+#<thread #X560572137b70>
+7.B3-eusgl$ l = 0, g = 1
+l = 1, g = 1
+l = 0, g = 1
+l = 1, g = 1
+l = 0, g = 1
+(setq g -1)
+-1
+```
+```Lisp
+1.eusgl$ (setq a (float-vector 1 2 3))
+#f(1.0 2.0 3.0)
+2.eusgl$ (setq b (float-vector 4 5 6))
+#f(4.0 5.0 6.0)
+3.eusgl$ (v+ a b)
+#f(5.0 7.0 9.0)
+4.eusgl$ (normalize-vector a)
+#f(0.267261 0.534522 0.801784)
+5.eusgl$ (v. (normalize-vector a) (normalize-vector b))
+0.974632
+6.eusgl$ (v* (normalize-vector a) (normalize-vector b))
+#f(-0.091372 0.182743 -0.091372)
+7.eusgl$ (aref a 0)
+1.0
+8.eusgl$ (elt a 0)
+1.0
+9.eusgl$ (setq c (make-matrix 3 3 (list #f(2 1 1) #f(1 1 1) #f(-2 0 1))))
+#2f((2.0 1.0 1.0) (1.0 1.0 1.0) (-2.0 0.0 1.0))
+10.eusgl$ (transform c a)
+#f(7.0 6.0 1.0)
+11.eusgl$ (transform a c)
+#f(-2.0 3.0 6.0)
+12.eusgl$ (inverse-matrix c)
+#2f((1.0 -1.0 0.0) (-3.0 4.0 -1.0) (2.0 -2.0 1.0))
+13.eusgl$ (m* c (inverse-matrix c))
+#2f((1.0 0.0 0.0) (0.0 1.0 0.0) (0.0 0.0 1.0))
+14.eusgl$ (m* (inverse-matrix c) c)
+#2f((1.0 0.0 0.0) (0.0 1.0 0.0) (0.0 0.0 1.0))
+15.eusgl$ (aref c 2 0)
+-2.0
+```
+```Lisp
+16.eusgl$ (setq c1 (instance cascaded-coords :init))
+#<cascaded-coords #X559fc30b3780  0.0 0.0 0.0 / 0.0 0.0 0.0>
+17.eusgl$ (send c1 :locate #f(100 200 300))
+#<cascaded-coords #X559fc30b3780  100.0 200.0 300.0 / 0.0 0.0 0.0>
+18.eusgl$ (send c1 :worldpos)
+#f(100.0 200.0 300.0)
+19.eusgl$ (send c1 :worldrot)
+#2f((1.0 0.0 0.0) (0.0 1.0 0.0) (0.0 0.0 1.0))
+20.eusgl$ (setq c2 (instance cascaded-coords :init))
+#<cascaded-coords #X559fc30b3c60  0.0 0.0 0.0 / 0.0 0.0 0.0>
+21.eusgl$ (send c2 :assoc c1)
+#<cascaded-coords #X559fc30b3780  100.0 200.0 300.0 / 0.0 0.0 0.0>
+22.eusgl$ (send c2 :rotate (deg2rad 45) :z)
+#<cascaded-coords #X559fc30b3c60  0.0 0.0 0.0 / 0.785 0.0 0.0>
+23.eusgl$ (send c1 :worldpos)
+#f(-70.7107 212.132 300.0)
+24.eusgl$ (send c1 :worldrot)
+#2f((0.707107 -0.707107 0.0) (0.707107 0.707107 0.0) (0.0 0.0 1.0))
+25.eusgl$ (send c2 :worldpos)
+#f(0.0 0.0 0.0)
+26.eusgl$ (send c2 :worldrot)
+#2f((0.707107 -0.707107 0.0) (0.707107 0.707107 0.0) (0.0 0.0 1.0))
+```
+```Lisp
+1.irteusgl$ (setq b1 (make-cube 100 100 30))
+#<body #X555ab4ccc220 (:cube 100.0 100.0 30.0) 0.0 0.0 0.0 / 0.0 0.0 0.0>
+2.irteusgl$ (setq b2 (make-cube 30 40 100))
+#<body #X555ab4ccc028 (:cube 30.0 40.0 100.0) 0.0 0.0 0.0 / 0.0 0.0 0.0>
+3.irteusgl$ (send b2 :rotate (deg2rad 30) :x)
+#<body #X555ab4ccc028 (:cube 30.0 40.0 100.0) 0.0 0.0 0.0 / 0.0 0.0 0.524>
+4.irteusgl$ (setq b3 (body+ b1 b2))
+#<body #X555ab4e45f30 (:complex +) 0.0 0.0 0.0 / 0.0 0.0 0.0>
+5.irteusgl$ (send b3 :set-color :red)
+#f(0.996094 0.0 0.0)
+6.irteusgl$ (make-irtviewer)
+#<x::irtviewer #X555ab4eea228 IRT viewer>
+7.irteusgl$ (objects (list b3))
+(#<body #X555ab4e45f30 (:complex +) 0.0 0.0 0.0 / 0.0 0.0 0.0>)
+8.irteusgl$ (setq b4 (body- b2 b1))
+#<body #X555ab4eeda40 (:complex -) 0.0 0.0 0.0 / 0.0 0.0 0.0>
+9.irteusgl$ (send b4 :set-color :green)
+#f(0.0 0.996094 0.0)
+10.irteusgl$ (objects (list b4))
+(#<body #X555ab4eeda40 (:complex -) 0.0 0.0 0.0 / 0.0 0.0 0.0>)
+```
