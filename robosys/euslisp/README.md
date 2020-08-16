@@ -296,3 +296,34 @@ nil
 10.irteusgl$ (send pa :inverse-transform-vector (send ph :worldpos))
 #f(0.0 -2.273737e-13 -600.0)
 ```
+
+```Lisp
+$ rlwrap irteusgl bodyset-link.l
+1.irteusgl$ (objects (list r))
+;; (make-irtviewer) executed
+(#<cascaded-link #X55b520bd5610  0.0 0.0 0.0 / 0.0 0.0 0.0>)
+2.irteusgl$ (send r :joint-list)
+(#<rotational-joint #X55b520c57340 :joint94236427252544>)
+3.irteusgl$ (send r :links)
+(#<bodyset-link #X55b5209cbaa8 :bodyset94236424583848  0.0 0.0 0.0 / 0.0 0.0 0.0> #<bodyset-link #X55b520bd5e68 :bodyset94236426722920  0.0 0.0 0.0 / 0.0 0.0 0.0>)
+4.irteusgl$ (send r :angle-vector)
+#f(0.0)
+5.irteusgl$ (send r :angle-vector (float-vector 30))
+#f(30.0)
+```
+```Lisp
+1.irteusgl$ (objects (list r))
+;; (make-irtviewer) executed
+(#<cascaded-link #X55f71d407610  0.0 0.0 0.0 / 0.0 0.0 0.0>)
+2.irteusgl$ (dotimes (i 300)
+              (send r :angle-vector (float-vector (* 90 (sin (/ i 100.0))))
+              (send *irtviewer* :draw-objects))
+
+1.irteusgl$ (objects (list r))
+;; (make-irtviewer) executed
+(#<cascaded-link #X5571e4d07610  0.0 0.0 0.0 / 0.0 0.0 0.0>)
+2.irteusgl$ (do-until-key
+              (send r :angle-vector (float-vector (* 90 (sin (/ i 100.0))))
+              (send *irtviewer* :draw-objects)
+              (incf i))
+```
