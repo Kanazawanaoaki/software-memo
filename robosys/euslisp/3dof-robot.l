@@ -56,3 +56,68 @@
 (send (send r :end-coords) :draw-on :flush t)
 (objects (list r (send r :end-coords)))
 
+;; ;; IK
+;; (dotimes (i 100)
+;;   (setq j (send r :calc-jacobian-from-link-list
+;; 		(send r :link-list (send r :end-coords :parent))
+;; 		:move-target (send r :end-coords) :rotation-axis t :translation-axis t))
+;;   (setq j# (sr-inverse j))
+;;   (setq da (transform j# #f(1 0 0 0 0 0)))
+;;   ;;(setq da (transform j# #f(0 0 0 0 -1 0)))
+;;   (send r :angle-vector (v+ (send r :angle-vector) da))
+;;   (send *irtviewer* :draw-objects))
+
+;; ;; IK rotation-axis nil
+;; (setq translation-axis t rotation-axis nil)
+;; (dotimes (i 2000)
+;;   (setq j
+;; 	(send r :calc-jacobian-from-link-list (send r :link-list (send r :end-coords :parent))
+;; 	      :move-target (send r :end-coords)
+;; 	      :rotation-axis rotation-axis :translation-axis translation-axis))
+;;   (setq j# (sr-inverse j))
+;;   (setq c (make-cascoords :pos (float-vector (* 100 (sin (/ i 100.0))) 0 200)))
+;;   (setq dif-pos (send (send r :end-coords) :difference-position c))
+;;   (setq da (transform j# dif-pos))
+;;   (send r :angle-vector (v+ (send r :angle-vector) da))
+;;   (send *irtviewer* :draw-objects :flush nil)
+;;   (send c :draw-on :flush t))
+
+;; ;; :inverse-kinematics
+;; (send r :angle-vector #f(0 0 0))
+;; (setq c (make-cascoords :pos #f(150 0 0) :rpy (float-vector 0 pi 0)))
+;; (send r :inverse-kinematics c
+;;       :link-list (send r :link-list (send r :end-coords :parent))
+;;       :move-target (send r :end-coords)
+;;       :translation-axis t
+;;       :rotation-axis t
+;;       :debug-view t)
+
+;; ;; IK fail
+;; (send r :angle-vector #f(0 0 0))
+;; (dotimes (i 400)
+;;   (setq c (make-cascoords
+;; 	   :pos (float-vector (+ 150 (* 50 (sin (/ i 100.0)))) 0 0)
+;; 	   :rpy (float-vector 0 pi 0)))
+;;   (send r :inverse-kinematics c
+;; 	:link-list (send r :link-list (send r :end-coords :parent))
+;; 	:move-target (send r :end-coords) :translation-axis t :rotation-axis t)
+;;   (x::window-main-one)
+;;   (send *irtviewer* :draw-objects :flush nil)
+;;   (send c :draw-on :flush t)
+;;   )
+
+;; IK revert-if-fail
+(send r :angle-vector #f(0 0 0))
+(dotimes (i 100)
+  (setq c (make-cascoords :pos (float-vector (+ 150 i) 0 0)
+			  :rpy (float-vector 0 pi 0)))
+  (send r :inverse-kinematics c
+	:link-list (send r :link-list (send r :end-coords :parent))
+	:move-target (send r :end-coords)
+	:translation-axis t
+	:rotation-axis nil
+	:revert-if-fail nil)
+  (x::window-main-one)
+  (send *irtviewer* :draw-objects :flush nil)
+  (send c :draw-on :flush t)
+  )
