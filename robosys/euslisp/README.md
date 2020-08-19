@@ -327,3 +327,196 @@ $ rlwrap irteusgl bodyset-link.l
               (send *irtviewer* :draw-objects)
               (incf i))
 ```
+
+## Lispにおけるデバッグ
+```Lisp
+1.irteusgl$ (defun fact (x) (if (zerop x) one (* x (fact (- x 1)))))
+fact
+2.irteusgl$ (fact 10)
+Call Stack (max depth: 20):
+  0: at (if (zerop x) one (* x (fact (- x 1))))
+  1: at (fact (- x 1))
+  2: at (* x (fact (- x 1)))
+  3: at (if (zerop x) one (* x (fact (- x 1))))
+  4: at (fact (- x 1))
+  5: at (* x (fact (- x 1)))
+  6: at (if (zerop x) one (* x (fact (- x 1))))
+  7: at (fact (- x 1))
+  8: at (* x (fact (- x 1)))
+  9: at (if (zerop x) one (* x (fact (- x 1))))
+  10: at (fact (- x 1))
+  11: at (* x (fact (- x 1)))
+  12: at (if (zerop x) one (* x (fact (- x 1))))
+  13: at (fact (- x 1))
+  14: at (* x (fact (- x 1)))
+  15: at (if (zerop x) one (* x (fact (- x 1))))
+  16: at (fact (- x 1))
+  17: at (* x (fact (- x 1)))
+  18: at (if (zerop x) one (* x (fact (- x 1))))
+  19: at (fact (- x 1))
+  And more...
+irteusgl 0 error: unbound variable one in (if (zerop x) one (* x (fact (- x 1))))
+3.E1-irteusgl$ ,x
+0
+4.E1-irteusgl$ btrace 100
+euserror
+euserror
+(if (zerop x) one (* x (fact (- x 1))))
+(fact (- x 1))
+(* x (fact (- x 1)))
+(if (zerop x) one (* x (fact (- x 1))))
+(fact (- x 1))
+(* x (fact (- x 1)))
+(if (zerop x) one (* x (fact (- x 1))))
+(fact (- x 1))
+(* x (fact (- x 1)))
+(if (zerop x) one (* x (fact (- x 1))))
+(fact (- x 1))
+(* x (fact (- x 1)))
+(if (zerop x) one (* x (fact (- x 1))))
+(fact (- x 1))
+(* x (fact (- x 1)))
+(if (zerop x) one (* x (fact (- x 1))))
+(fact (- x 1))
+(* x (fact (- x 1)))
+(if (zerop x) one (* x (fact (- x 1))))
+(fact (- x 1))
+(* x (fact (- x 1)))
+(if (zerop x) one (* x (fact (- x 1))))
+(fact (- x 1))
+(* x (fact (- x 1)))
+(if (zerop x) one (* x (fact (- x 1))))
+(fact (- x 1))
+(* x (fact (- x 1)))
+(if (zerop x) one (* x (fact (- x 1))))
+(fact (- x 1))
+(* x (fact (- x 1)))
+(if (zerop x) one (* x (fact (- x 1))))
+(fact 10)
+#<compiled-code #X560e5a5fe3e8>
+#<compiled-code #X560e5a5fe3e8>
+t
+5.E1-irteusgl$ (zerop x)
+t
+6.E1-irteusgl$ ,one
+*unbound*
+7.E1-irteusgl$ (reset)
+8.irteusgl$ (defun fact (x) (if (zerop x) 1 (* x (fact (- x 1)))))
+fact
+9.irteusgl$ (fact 10)
+3628800
+```
+```Lisp
+1.irteusgl$ (load "factb.l")
+t
+2.irteusgl$ (factb 10)
+brk1: ,x
+10
+brk1: (zerop x)
+nil
+brk1: brk1: ,x
+9
+brk1: (zerop x)
+nil
+brk1: (reset)
+```
+```Lisp
+1.irteusgl$ (load "fact2.l")
+t
+2.irteusgl$ (fact2 10)
+0
+3.irteusgl$ (load "fact3.l")
+t
+4.irteusgl$ (fact3 10)
+x = 10
+x = 9
+x = 8
+x = 7
+x = 6
+x = 5
+x = 4
+x = 3
+x = 2
+x = 1
+x = 0
+0
+9.irteusgl$ (load "fact4.l")
+t
+10.irteusgl$ (fact4 10)
+3628800
+11.irteusgl$ (push :debug *features*)
+(:debug :irt :gl :xlib :xwindow :x.v11r4 :geometry :word-size=64 :x86_64 :x11r6.1 :pthread :thread :linux :gcc3 :gcc :unix :eus :common :ieee-floating-point)
+12.irteusgl$ (load "fact4.l")
+t
+13.irteusgl$ (fact4 10)
+x = 10
+x = 9
+x = 8
+x = 7
+x = 6
+x = 5
+x = 4
+x = 3
+x = 2
+x = 1
+x = 0, return 1
+3628800
+14.irteusgl$ (setq *features* (delete :debug *features*))
+(:irt :gl :xlib :xwindow :x.v11r4 :geometry :word-size=64 :x86_64 :x11r6.1 :pthread :thread :linux :gcc3 :gcc :unix :eus :common :ieee-floating-point)
+```
+```Lisp
+1.irteusgl$ (defun fact2 (x)
+  (if (> x 0)
+      (* x (fact2 (- x 1)))
+    1))
+fact2
+2.irteusgl$ (trace fact2)
+(fact2)
+3.irteusgl$ (fact2 10)
+;;
+1: --> fact2 (10);;
+2: --> fact2 (9);;
+3: --> fact2 (8);;
+4: --> fact2 (7);;
+5: --> fact2 (6);;
+6: --> fact2 (5);;
+7: --> fact2 (4);;
+8: --> fact2 (3);;
+9: --> fact2 (2);;
+10: --> fact2 (1);;
+11: --> fact2 (0);;
+11: 1 <-- fact2;;
+10: 1 <-- fact2;;
+9: 2 <-- fact2;;
+8: 6 <-- fact2;;
+7: 24 <-- fact2;;
+6: 120 <-- fact2;;
+5: 720 <-- fact2;;
+4: 5040 <-- fact2;;
+3: 40320 <-- fact2;;
+2: 362880 <-- fact2;;
+1: 3628800 <-- fact2
+3628800
+4.irteusgl$ (untrace fact2)
+nil
+```
+```Lisp
+1.irteusgl$ (step (+ (* 2 3) (* 4 5)))
+ (* 2 3)
+;; s1: ?
+;; s   -- single step
+;; g   -- execute this form without stepping
+;; p,pp-- print current form
+;; q   -- quit stepping
+;; e form-- evaluate form
+;; s1: p
+(* 2 3)
+;; s1: s
+;; (* 2 3) ==> 6
+ (* 4 5)
+;; s1: e (* 4 5)
+20
+;; s1: s
+;; (* 4 5) ==> 20
+26
+```
