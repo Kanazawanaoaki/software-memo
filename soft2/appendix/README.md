@@ -1,4 +1,3 @@
-# software2 appendix
 ソフトウェア第二の付録．記号処理による推論．  
 
 ## マッチング
@@ -195,8 +194,193 @@ eus$ (substitute-bindings
 ```
 ```Lisp
 $ rlwrap eus list-3-3-5.l
-eus$ (defparameter *rules* nil)
+1.eus$ (defparameter *rules* nil)
 nil
-eus$ (<- (father ?x ?y) (and (parent ?x ?y) (male ?x)))
+2.eus$ (<- (father ?x ?y) (and (parent ?x ?y) (male ?x)))
 (((father ?x ?y) (and (parent ?x ?y) (male ?x))))
+3.eus$ (<- (child ?x ?y) (parent ?y ?x))
+(((child ?x ?y) (parent ?y ?x)) ((father ?x ?y) (and (parent ?x ?y) (male ?x))))
+4.eus$ (<- (daughter ?x ?y) (and (child ?x ?y) (female ?x)))
+(((daughter ?x ?y) (and (child ?x ?y) (female ?x))) ((child ?x ?y) (parent ?y ?x)) ((father ?x ?y) (and (parent ?x ?y) (male ?x))))
+5.eus$ (setq *wmemory* '((parent donald nancy) (male donald) (female nancy)))
+((parent donald nancy) (male donald) (female nancy))
+6.eus$ (production-system '(daughter nancy donald))
+rule1 : ((daughter ?x ?y) (and (child ?x ?y) (female ?x)))
+rule2 : ((child ?x ?y) (parent ?y ?x))
+rule3 : ((father ?x ?y) (and (parent ?x ?y) (male ?x)))
+wm -> ((parent donald nancy) (male donald) (female nancy))
+0: rule2 fired
+wm -> ((child nancy donald) (parent donald nancy) (male donald) (female nancy))
+Rule Interpreter Halted
+Goal (daughter nancy donald) archived.
+Here are contents of working memory:
+((daughter nancy donald)
+ (child nancy donald)
+ (parent donald nancy)
+ (male donald)
+ (female nancy))
+nil
+```
+```Lisp
+$ rlwrap eus list-3-3-6.l
+1.eus$ (setq *wmemory* '((parent donald nancy) (male donald) (female nancy)))
+((parent donald nancy) (male donald) (female nancy))
+2.eus$ (production-system '(daughter donald nancy))
+rule1 : ((daughter ?y ?x) (and (child ?y ?x) (female ?y)))
+rule2 : ((child ?x ?y) (parent ?y ?x))
+rule3 : ((father ?x ?y) (and (parent ?x ?y) (male ?x)))
+wm -> ((parent donald nancy) (male donald) (female nancy))
+0: rule2 fired
+wm -> ((child nancy donald) (parent donald nancy) (male donald) (female nancy))
+1: rule1 fired
+wm -> ((daughter nancy donald)
+ (child nancy donald)
+ (parent donald nancy)
+ (male donald)
+ (female nancy))
+2: rule3 fired
+wm -> ((father donald nancy)
+ (daughter nancy donald)
+ (child nancy donald)
+ (parent donald nancy)
+ (male donald)
+ (female nancy))
+Rule Interpreter Halted
+No rules found.
+Here are contents of working memory:
+((father donald nancy)
+ (daughter nancy donald)
+ (child nancy donald)
+ (parent donald nancy)
+ (male donald)
+ (female nancy))
+nil
+```
+プロダクションシステムの応用例
+```Lisp
+$ rlwrap eus list-3-3-6.l
+1.eus$ (defparameter *rules* nil)
+nil
+2.eus$ (<- (turn left) (and (obstacle front) (obstacle right)))
+(((turn left) (and (obstacle front) (obstacle right))))
+3.eus$ (<- (turn right) (and (obstacle front) (obstacle left)))
+(((turn right) (and (obstacle front) (obstacle left))) ((turn left) (and (obstacle front) (obstacle right))))
+4.eus$ (<- (go backward) (and (obstacle front) (obstacle right) (obstacle left)))
+(((go backward) (and (obstacle front) (obstacle right) (obstacle left))) ((turn right) (and (obstacle front) (obstacle left))) ((turn left) (and (obstacle front) (obstacle right))))
+5.eus$ (<- (go forward))
+(((go forward) nil) ((go backward) (and (obstacle front) (obstacle right) (obstacle left))) ((turn right) (and (obstacle front) (obstacle left))) ((turn left) (and (obstacle front) (obstacle right))))
+6.eus$ (setq *wmemory* '((obstacle front) (obstacle right) (obstacle left)))
+((obstacle front) (obstacle right) (obstacle left))
+7.eus$ (production-system nil)
+rule1 : ((go forward) nil)
+rule2 : ((go backward) (and (obstacle front) (obstacle right) (obstacle left)))
+rule3 : ((turn right) (and (obstacle front) (obstacle left)))
+rule4 : ((turn left) (and (obstacle front) (obstacle right)))
+wm -> ((obstacle front) (obstacle right) (obstacle left))
+0: rule3 fired
+wm -> ((turn right) (obstacle front) (obstacle right) (obstacle left))
+1: rule4 fired
+wm -> ((turn left)
+ (turn right)
+ (obstacle front)
+ (obstacle right)
+ (obstacle left))
+2: rule2 fired
+wm -> ((go backward)
+ (turn left)
+ (turn right)
+ (obstacle front)
+ (obstacle right)
+ (obstacle left))
+Rule Interpreter Halted
+No rules found.
+Here are contents of working memory:
+((go backward)
+ (turn left)
+ (turn right)
+ (obstacle front)
+ (obstacle right)
+ (obstacle left))
+nil
+8.eus$ (production-system '(go forward))
+rule1 : ((go forward) nil)
+rule2 : ((go backward) (and (obstacle front) (obstacle right) (obstacle left)))
+rule3 : ((turn right) (and (obstacle front) (obstacle left)))
+rule4 : ((turn left) (and (obstacle front) (obstacle right)))
+wm -> ((go backward) (turn left) (turn right) (obstacle front) (obstacle right) (obstacle left))
+0: rule3 fired
+wm -> ((turn right)
+ (go backward)
+ (turn left)
+ (obstacle front)
+ (obstacle right)
+ (obstacle left))
+1: rule4 fired
+wm -> ((turn left)
+ (turn right)
+ (go backward)
+ (obstacle front)
+ (obstacle right)
+ (obstacle left))
+2: rule2 fired
+wm -> ((go backward)
+ (turn left)
+ (turn right)
+ (obstacle front)
+ (obstacle right)
+ (obstacle left))
+Rule Interpreter Halted
+No rules found.
+Here are contents of working memory:
+((go backward)
+ (turn left)
+ (turn right)
+ (obstacle front)
+ (obstacle right)
+ (obstacle left))
+nil
+```
+
+## マッチングを使った応用例
+```Lisp
+$ rlwrap eus list-3-4-1.l
+1.eus$ (replcae-logic '(and (or a b) (not (and a b))))
+(nand (nand (nand (nand a a) (nand b b)) (nand (nand (nand a b) (nand a b)) (nand (nand a b) (nand a b)))) (nand (nand (nand a a) (nand b b)) (nand (nand (nand a b) (nand a b)) (nand (nand a b) (nand a b)))))
+2.eus$ (check-logic (replcae-logic '(and (or a b) (not (and a b)))))
+a-b----
+0 0 | 0
+0 1 | 1
+1 0 | 1
+1 1 | 0
+(nil nil nil nil)
+3.eus$ (check-logic (replcae-logic '(and (or a b) (or (not a) (not b)))))
+a-b----
+0 0 | 0
+0 1 | 1
+1 0 | 1
+1 1 | 0
+(nil nil nil nil)
+4.eus$ (check-logic (replcae-logic '(or (and a (not b)) (and (not a) b))))
+a-b----
+0 0 | 0
+0 1 | 1
+1 0 | 1
+1 1 | 0
+(nil nil nil nil)
+5.eus$ (check-logic '(nand (nand a (nand a b)) (nand (nand a b) b)))
+a-b----
+0 0 | 0
+0 1 | 1
+1 0 | 1
+1 1 | 0
+(nil nil nil nil)
+```
+```Lisp
+$ rlwrap eus list-3-4-2.l
+1.eus$ (pat-match '(?x want ?y) '(i want to test this program))
+((?y . want) (?x i))
+```
+人工知能プログラム Eliza
+```Lisp
+
 ```

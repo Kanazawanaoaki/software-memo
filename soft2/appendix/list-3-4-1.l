@@ -74,7 +74,7 @@
 		((child ?x ?y) (parent ?y ?x))
 		((father ?x ?y) (and (parent ?x ?y) (male ?x)))))
 
-(setq *conflict-resolution-strategies* '(find-first))
+;; (setq *conflict-resolution-strategies* '(find-first))
 
 (defun conflict-resolution (matching-rules)
   (dolist (crs *conflict-resolution-strategies*)
@@ -127,3 +127,72 @@
        (format t "wm -> ")
        (pprint *wmemory*)
        (incf cycle-number)))))
+
+(setq *conflict-resolution-strategies*
+      '(fireable-rules
+	find-least-recently-fired-rules
+	simplest-instantiations
+	find-first))
+
+(defun fireable-rules (rules)
+  (remove nil
+	  (mapcar
+	   #'(lambda (r)
+	       (if (set-difference
+		    (consequent-instantiation r)
+		    (gethash r *previous-fired-instantiations*)
+		    :test #'equal)
+		   r))
+	   rules)))
+
+(defun find-least-recently-fired-rules (rules)
+  (labels
+   ((last-fired (r) (let ((n (gethash r *cycle-last-fired*))) (or n 0))))
+   (let ((sort-rules (sort rules #'<= #'last-fired)) ret)
+     (push (car sort-rules) ret)
+     (dolist (rule (cdr sort-rules))
+       (if (eq (last-fired rule) (last-fired (car sort-rules)))
+	   (push rule ret)))
+     (nreverse ret))))
+
+(defun simplest-instantiations (rules)
+  (labels
+   ((complexity (r) (length (flatten r))))
+   (let ((sort-rules (sort rules #'<= #'complexity)) ret)
+     (push (car sort-rules) ret)
+     (dolist (rule (cdr sort-rules))
+       (if (eq (complexity rule) (complexity (car sort-rules)))
+	   (push rule ret)))
+     (nreverse ret))))
+
+(setq *rules*
+      '(((not ?a)    (nand ?a ?a))
+	((and ?a ?b) (not (nand ?a ?b)))
+	((or ?a ?b)  (nand (not ?a) (not ?b)))))
+
+(defun apply-rule (target)
+  (dolist (r *rules* target)
+    (let ((b (match (car r) target)))
+      (if (not (eq b 'fail))
+	  (return-from apply-rule (substitute-bindings b (cadr r)))))))
+
+(defun replcae-logic (target)
+  (cond
+   ((atom target)
+    target)
+   ((eq (car target) 'nand)
+    (cons 'nand
+	  (cons (replcae-logic (car (cdr target)))
+		(list (replcae-logic (cadr (cdr target)))))))
+   (t
+    (replcae-logic (apply-rule target)))))
+
+
+(defun nand (a b)
+  (if (= a b 1) 0 1))
+
+(defun check-logic (target)
+  (print 'a-b----)
+  (mapcar #'(lambda (a b)
+	      (format t "~d ~d | ~d~%" a b (eval target)))
+	  '(0 0 1 1) '(0 1 0 1)))

@@ -74,7 +74,7 @@
 		((child ?x ?y) (parent ?y ?x))
 		((father ?x ?y) (and (parent ?x ?y) (male ?x)))))
 
-(setq *conflict-resolution-strategies* '(find-first))
+;; (setq *conflict-resolution-strategies* '(find-first))
 
 (defun conflict-resolution (matching-rules)
   (dolist (crs *conflict-resolution-strategies*)
@@ -127,3 +127,69 @@
        (format t "wm -> ")
        (pprint *wmemory*)
        (incf cycle-number)))))
+
+(setq *conflict-resolution-strategies*
+      '(fireable-rules
+	find-least-recently-fired-rules
+	simplest-instantiations
+	find-first))
+
+(defun fireable-rules (rules)
+  (remove nil
+	  (mapcar
+	   #'(lambda (r)
+	       (if (set-difference
+		    (consequent-instantiation r)
+		    (gethash r *previous-fired-instantiations*)
+		    :test #'equal)
+		   r))
+	   rules)))
+
+(defun find-least-recently-fired-rules (rules)
+  (labels
+   ((last-fired (r) (let ((n (gethash r *cycle-last-fired*))) (or n 0))))
+   (let ((sort-rules (sort rules #'<= #'last-fired)) ret)
+     (push (car sort-rules) ret)
+     (dolist (rule (cdr sort-rules))
+       (if (eq (last-fired rule) (last-fired (car sort-rules)))
+	   (push rule ret)))
+     (nreverse ret))))
+
+(defun simplest-instantiations (rules)
+  (labels
+   ((complexity (r) (length (flatten r))))
+   (let ((sort-rules (sort rules #'<= #'complexity)) ret)
+     (push (car sort-rules) ret)
+     (dolist (rule (cdr sort-rules))
+       (if (eq (complexity rule) (complexity (car sort-rules)))
+	   (push rule ret)))
+     (nreverse ret))))
+
+(defun pat-match (x y &optional binds)
+  (cond
+   ((eq binds 'fail) 'fail)
+   ((variable-p x)
+    (match-variables x y binds))
+   ((eql x y) binds)
+   ((and (listp x) (variable-p (car x)))
+    (segment-match x y binds))
+   ((and (listp x) (listp y))
+    (pat-match (cdr x) (car x)
+	       (pat-match (car x) (car y) binds)))
+   (t 'fail)))
+
+(defun upto (item list)
+  (if (member item list) (subseq list 0 (position item list))))
+
+(defun segment-match (x y binds)
+  (let ((var (car x))
+	(remainder (cdr x)))
+    (if (null remainder)
+	(match-variable var y binds)
+      (if (member (car remainder) y)
+	  (pat-match remainder
+		     (member (first remainder) y)
+		     (match-variable var
+				     (upto (first remainder) y)
+				     binds))
+	'fail))))
