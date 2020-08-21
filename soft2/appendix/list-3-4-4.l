@@ -165,6 +165,35 @@
 	   (push rule ret)))
      (nreverse ret))))
 
+(defun pat-match (x y &optional binds)
+  (cond
+   ((eq binds 'fail) 'fail)
+   ((variable-p x)
+    (match-variables x y binds))
+   ((eql x y) binds)
+   ((and (listp x) (variable-p (car x)))
+    (segment-match x y binds))
+   ((and (listp x) (listp y))
+    (pat-match (cdr x) (car x)
+	       (pat-match (car x) (car y) binds)))
+   (t 'fail)))
+
+(defun upto (item list)
+  (if (member item list) (subseq list 0 (position item list))))
+
+(defun segment-match (x y binds)
+  (let ((var (car x))
+	(remainder (cdr x)))
+    (if (null remainder)
+	(match-variable var y binds)
+      (if (member (car remainder) y)
+	  (pat-match remainder
+		     (member (first remainder) y)
+		     (match-variable var
+				     (upto (first remainder) y)
+				     binds))
+	'fail))))
+
 (setq *eliza-rules*
       '(((hello ?x)
 	 (how do you please stats your problem.))
@@ -173,4 +202,41 @@
 	 (why do you want ?x)
 	 (suppose you get ?x soon))
 	((?x if ?y)
-	 (do you )
+	 (do you really think its likely that ?y)
+	 (do you with that ?y)
+	 (what do you think about ?y)
+	 (really-- if ?y))
+	((?x no ?y)
+	 (why not?) (you are being a bit negative)
+	 (are you saying no just to be negative))
+	((?x I was ?y)
+	 (where you really?) (perhaps I already know you ware ?y)
+	 (what do you tell me you were ?y now?))
+	((?x I feel ?y)
+	 (do you often fell ?y ?))
+	((?x I felt ?y)
+	 (what other feelings do you have?))
+	((?x)
+	 (next?))))
+
+(defun rule-pattern (rule) (car rule))
+(defun rule-responses (rule) (cdr rule))
+
+(defun random-elt (choices)
+  (elt choices (random (length choices))))
+
+(defun use-eliza-rules (input)
+  (let ((match-result nil) (matching-rule nil))
+    (dolist (rule *eliza-rules*)
+      (unless matching-rule
+	(setq match-result
+	      (pat-match (rule-pattern rule) input))
+	(if (not (eq match-result 'fail))
+	    (setq matching-rule rule))))
+    (substitute-bindings match-result
+			(random-elt (rule-responses matching-rule)))))
+
+(defun eliza ()
+  (loop
+   (prin1 'eliza>)(finish-output)
+   (print (flatten (use-eliza-rules (read))))))
