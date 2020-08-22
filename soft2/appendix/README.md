@@ -382,5 +382,59 @@ $ rlwrap eus list-3-4-2.l
 ```
 人工知能プログラム Eliza
 ```Lisp
+$ rlwrap eus list-3-4-4.l
+1.eus$ eliza
+eliza>hello
+(next?)
+eliza>(hello)
+(how do you please stats your problem.)
+```
 
+## 後ろ向き推論
+変数を含むパターン同士のマッチング
+```Lisp
+$ rlwrap eus list-3-5-2.l
+1.eus$ (match '(?x b c) '(a b c))
+((?x . a))
+2.eus$ (match '(?x a) '(a ?x))
+fail
+```
+Unify関数の構造
+```Lisp
+$ rlwrap eus list-3-5-3.l
+1.eus$ (unify '(?x a) '(a ?x))
+((?x . a))
+2.eus$ (unify '(?x a a) '(?y a ?y))
+((?y . a) (?x . ?y))
+3.eus$ (unify '(?x a b ?x) '((?y) a ?y (b)))
+((?y . b) (?x ?y))
+```
+
+バインディングの再帰的呼び出し
+```Lisp
+$ rlwrap eus list-3-5-4.l
+1.eus$ (unify '(?x a a) '(?y a ?y))
+((?y . a) (?x . ?y))
+2.eus$ (get-binding '?x '((?y . a) (?x . ?y)))
+a
+3.eus$ (unify '(?x a b ?x) '((?y) a ?y (b)))
+((?y . b) (?x ?y))
+4.eus$ (get-binding '?x '((?y . b) (?x ?y)))
+(?y)
+```
+
+同一変数のバインディング
+```Lisp
+$ rlwrap eus list-3-5-5.l
+1.eus$ (unify '(?x ?x ?x) '(?y ?y ?y))
+((?x . ?y))
+```
+
+Unifyの応用例
+```Lisp
+$ rlwrap eus list-3-5-6.l
+1.eus$ (unifier '(?x ?y a) '(?y ?x ?x))
+(a a a)
+2.eus$ (unifier '((?a * ?x ^2 ) + (?b * ?x) + ?c) '(?z + (4 * 5) + 3))
+((?a * 5 ^2) + (4 * 5) + 3)
 ```
