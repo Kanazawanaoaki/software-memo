@@ -375,19 +375,34 @@ a-b----
 1 1 | 0
 (nil nil nil nil)
 ```
+簡単な会話プログラム
 ```Lisp
 $ rlwrap eus list-3-4-2.l
 1.eus$ (pat-match '(?x want ?y) '(i want to test this program))
-((?y . want) (?x i))
+((?y to test this program) (?x i))
 ```
 人工知能プログラム Eliza
 ```Lisp
 $ rlwrap eus list-3-4-4.l
 1.eus$ eliza
-eliza>hello
-(next?)
 eliza>(hello)
 (how do you please stats your problem.)
+eliza>(i want to test this program)
+(why do you want to test this program)
+eliza>(i could see if it works)
+(really-- if it works)
+eliza>(no not really)
+(why not?)
+eliza>(no)
+(are you saying no just to be negative)
+eliza>(no)
+(you are being a bit negative)
+eliza>(foreget it-- i was wondering how general the program is)
+(what do you tell me you were wondering how general the program is now?)
+eliza>(i felt like it)
+(what other feelings do you have?)
+eliza>(i feel this is enough)
+(do you often fell this is enough ?)
 ```
 
 ## 後ろ向き推論
@@ -437,4 +452,13 @@ $ rlwrap eus list-3-5-6.l
 (a a a)
 2.eus$ (unifier '((?a * ?x ^2 ) + (?b * ?x) + ?c) '(?z + (4 * 5) + 3))
 ((?a * 5 ^2) + (4 * 5) + 3)
+```
+
+ルールの定義
+```Lisp
+$ rlwrap eus list-3-5-8.l
+1.eus$ (<- (parent donald nancy))
+1
+2.eus$ (<- (child ?x ?y) (parent ?y ?x))
+1
 ```

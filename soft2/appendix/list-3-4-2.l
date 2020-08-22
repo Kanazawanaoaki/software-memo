@@ -1,3 +1,12 @@
+(defun make-hash-table (&key (size 10) (test #'eq) (rehash-size 1.7)
+			     (hash #'sxhash) (not-found nil))
+  (instance hash-table :init :size size
+  	    :test test
+  	    :hash hash))
+  )
+(defun gethash (key htab) (send htab :get key))
+(defun sethash (key htab val) (send htab :enter key val))
+
 (defun variable-p (x)
   (and (symbolp x) (= (char (symbol-name x) 0) #\?)))
 
@@ -174,7 +183,7 @@
    ((and (listp x) (variable-p (car x)))
     (segment-match x y binds))
    ((and (listp x) (listp y))
-    (pat-match (cdr x) (car x)
+    (pat-match (cdr x) (cdr y)
 	       (pat-match (car x) (car y) binds)))
    (t 'fail)))
 
