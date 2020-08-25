@@ -266,6 +266,30 @@
 	(not (prove-not (cadr expr) binds))
 	(t   (prove-simple (car expr) (cdr expr) binds))))
 
+;; (defun prove-simple (pred args binds)
+;;   (mapcan #'(lambda (r)
+;; 	      (let ((b2 (unify args (car r) binds)))
+;; 		(unless (eq b2 'fail)
+;; 		  (if (cdr r)
+;; 		      (prove (cdr r) b2)
+;; 		    (list b2)))))
+;; 	  (gethash pred *rules*)))
+
+;; (defun prove-and (clauses binds)
+;;   (if (null clauses)
+;;       (list binds)
+;;     (mapcan #'(lambda (b)
+;; 		(prove (car clauses) b))
+;; 	    (prove-and (cdr clauses) binds))))
+
+;; (defun prove-or (clauses binds)
+;;   (mapcan #'(lambda (c) (prove c binds))
+;; 	  clauses))
+
+;; (defun prove-not (clauses binds)
+;;   (unless (prove clauses binds)
+;;     (list binds)))
+
 (defun prove-simple (pred args binds)
   (mapcan #'(lambda (r)
 	      (let ((b2 (unify args (car r) binds)))
@@ -273,20 +297,16 @@
 		  (if (cdr r)
 		      (prove (cdr r) b2)
 		    (list b2)))))
-	  (gethash pred *rules*)))
+	  (mapcar #'change-vars
+		  (gethash pred *rules*))))
 
-(defun prove-and (clauses binds)
-  (if (null clauses)
-      (list binds)
-    (mapcan #'(lambda (b)
-		(prove (car clauses) b))
-	    (prove-and (cdr clauses) binds))))
+(defun change-vars (r)
+  (substitute-bindings (mapcar #'(lambda (v) (cons v (gensym "?")))
+			       (vars-in r))
+		       r))
 
-(defun prove-or (clauses binds)
-  (mapcan #'(lambda (c) (prove c binds))
-	  clauses))
-
-(defun prove-not (clauses binds)
-  (unless (prove clauses binds)
-    (list binds)))
+(defun vars-in (expr)
+  (if (atom expr)
+      (if (variable-p expr) (list expr))
+    (union (vars-in (car expr)) (vars-in (cdr expr)))))
 
